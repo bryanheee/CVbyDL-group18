@@ -1,9 +1,19 @@
 import os
 import shutil
+import cv2
 from sklearn.model_selection import train_test_split
 
+target_resolution = (960, 540)
 
-dir = '111111'
+def resize_and_save(image_path, save_path, target_resolution):
+    image = cv2.imread(image_path)
+    if image.shape[:2] != target_resolution:
+        image_resized = cv2.resize(image, target_resolution)
+        cv2.imwrite(save_path, image_resized)
+    else:
+        shutil.copy(image_path, save_path)
+
+dir = 'DATASETS_LOW_RES'
 
 # Paths
 dataset_path = 'archive/Warp-D/train/images'
@@ -33,19 +43,19 @@ train_files, val_files = train_test_split(image_files, test_size=0.2, random_sta
 
 # Copy training files
 for file in train_files:
-    shutil.copy(os.path.join(dataset_path, file), os.path.join(new_train_path, file))
+    resize_and_save(os.path.join(dataset_path, file), os.path.join(new_train_path, file), target_resolution)
     label_file = file.replace('.jpg', '.txt').replace('.png', '.txt')
     shutil.copy(os.path.join(labels_path, label_file), os.path.join(new_train_labels_path, label_file))
 
 # Copy validation files
 for file in val_files:
-    shutil.copy(os.path.join(dataset_path, file), os.path.join(new_val_path, file))
+    resize_and_save(os.path.join(dataset_path, file), os.path.join(new_val_path, file), target_resolution)
     label_file = file.replace('.jpg', '.txt').replace('.png', '.txt')
     shutil.copy(os.path.join(labels_path, label_file), os.path.join(new_val_labels_path, label_file))
 
 test_files = [f for f in os.listdir('archive/Warp-D/test/images') if os.path.isfile(os.path.join('archive/Warp-D/test/images', f))]
 
 for file in test_files:
-    shutil.copy(os.path.join('archive/Warp-D/test/images', file), os.path.join(new_test_path, file))
+    resize_and_save(os.path.join('archive/Warp-D/test/images', file), os.path.join(new_test_path, file), target_resolution)
     label_file = file.replace('.jpg', '.txt').replace('.png', '.txt')
     shutil.copy(os.path.join('archive/Warp-D/test/labels', label_file), os.path.join(new_test_labels_path, label_file))
