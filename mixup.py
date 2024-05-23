@@ -110,8 +110,8 @@ if __name__ == "__main__":
     print(f"lambda is {lam}")
 
     # Paths
-    dataset_path = 'Warp_D/images/'+ trainORval +'_images'
-    labels_path = 'Warp_D/labels/'+ trainORval +'_labels'
+    dataset_path = 'datasets/'+ trainORval +'/images'
+    labels_path = 'datasets/'+ trainORval +'/labels'
 
     new_train_path = 'datasets_mixup_lam'+ str(lam).replace('.', '') +'/'+ trainORval +'/images'
     new_train_labels_path = 'datasets_mixup_lam'+ str(lam).replace('.', '') +'/' + trainORval + '/labels'
