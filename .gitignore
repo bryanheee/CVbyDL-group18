@@ -1,0 +1,28 @@
+# macOS system files
+.DS_Store
+
+# PDF files
+*.pdf
+
+# Folders
+Warp_D/
+archive_split/
+coco8/
+cvbydl/
+# datasets/
+datasets/**/*
+datasets_mixup_lam05000386523859661/
+docs/
+run1epoch1/
+runs/
+warpd/
+
+# Compressed files
+*.zip
+
+# Model weights
+*.pt
+
+# Except this file itself and the .gitkeep files
+!datasets/**/.gitkeep
+!datasets/**/*.yaml
