@@ -70,14 +70,11 @@ def mixup2images(file1, file2, alpha):
     # print(f"array 2 is \n {arr2}")
     # visualize_image(image2, arr2, f"image2, shape = {image2.shape}")
 
-    original_size1 = (image.shape[1], image.shape[0]) 
-    original_size2 = (image2.shape[1], image2.shape[0])
 
     # print(f"shape of file 1 is = {image.shape}")
     # print(f"shape of file 2 is = {image2.shape}")
 
     # resize 'image2' to the dimensions of 'image'
-    image2 = cv2.resize(image2, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_LINEAR)
     # print(f"new shape of file 2 = {image2.shape}")  
     # visualize_image(image2, f"image2, reshaped = {image2.shape}")
     # arr2 = adjust_labels(arr2, original_size2, original_size1)
@@ -110,11 +107,11 @@ if __name__ == "__main__":
     print(f"lambda is {lam}")
 
     # Paths
-    dataset_path = 'datasets/'+ trainORval +'/images'
-    labels_path = 'datasets/'+ trainORval +'/labels'
+    dataset_path = 'DATASETS_LOW_RES/'+ trainORval +'/images'
+    labels_path = 'DATASETS_LOW_RES/'+ trainORval +'/labels'
 
-    new_train_path = 'datasets_mixup_lam'+ str(lam).replace('.', '') +'/'+ trainORval +'/images'
-    new_train_labels_path = 'datasets_mixup_lam'+ str(lam).replace('.', '') +'/' + trainORval + '/labels'
+    new_train_path = 'low_res_datasets_mixup_lam'+ str(lam).replace('.', '') +'/'+ trainORval +'/images'
+    new_train_labels_path = 'low_res_datasets_mixup_lam'+ str(lam).replace('.', '') +'/' + trainORval + '/labels'
 
     # Create directories for new train and val sets
     os.makedirs(new_train_path, exist_ok=True)
