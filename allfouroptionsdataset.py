@@ -17,6 +17,7 @@ labels = os.listdir(labels_dir)
 df = pd.DataFrame(columns=["file_name", "class", "x_center",
               "y_center", "width", "height"])
 
+
 def load_labels(labels_dir):
   df = pd.DataFrame(columns=["file_name", "class", "x_center",
               "y_center", "width", "height"])
@@ -39,6 +40,10 @@ def load_labels(labels_dir):
   return df
 
 df = load_labels(labels_dir)
+
+test_labels_dir = os.path.join(BASE_DIR, "test/labels") 
+labels = os.listdir(test_labels_dir)
+df_test_labels = load_labels(test_labels_dir)
 
 # Load example image and display
 img_name = "POSAD_1_11-Sep_09-43-28"
@@ -212,74 +217,116 @@ def cutout(img, img_boxes, threshold=0.3):
 
 # Loop through dataset and either don't apply any augmentation, apply cutmix, cutout, mixup or a combination of all three
 # For both test, train
-def generate_data_set(options = ["cutmix", "cutout", "mixup", "none"], AUG_DIR = "DATASETS_COMBINE_ALLFOUR"):
-   for split in ["train"]: # leave test set and val set unchanged / no augmentation applied to them
-    df_labels = df
-    images_dir = os.path.join(BASE_DIR, split, "images")
-    images_aug_dir = os.path.join(AUG_DIR, split, "images")
-    images = os.listdir(images_dir) #list all filenames inside images_dir
-    labels_aug_dir = os.path.join(AUG_DIR, split, "labels")
-
-    os.makedirs(images_aug_dir, exist_ok=True)
-    os.makedirs(labels_aug_dir, exist_ok=True)
-
-    for image in tqdm(images, desc=f"Processing {split} set"): # for each image in images_dir = <base>/<split>/images
-        
-        img = plt.imread(os.path.join(images_dir, image)) # read current image as np array
-        img_boxes = df_labels[df_labels["file_name"] == image.split(".")[0]] # get all bounding boxes of the current image
+def generate_data_set(options = ["cutmix", "cutout", "mixup", "none"], AUG_DIR = "DATASETS_COMBINE_ALLFOUR", bernouli = False, split="train"):
+   if split == "train":
+      df_labels = df  
+   elif split == "test":
+      df_labels = df_test_labels
+   else:
+    raise ValueError("should be train or test")
+   images_dir = os.path.join(BASE_DIR, split, "images")
+   images_aug_dir = os.path.join(AUG_DIR, split, "images")
+   images = os.listdir(images_dir) #list all filenames inside images_dir
+   labels_aug_dir = os.path.join(AUG_DIR, split, "labels")
+         
+   os.makedirs(images_aug_dir, exist_ok=True)
+   os.makedirs(labels_aug_dir, exist_ok=True)
+   
+   for image in tqdm(images, desc=f"Processing {split} set"): # for each image in images_dir = <base>/<split>/images
+    img = plt.imread(os.path.join(images_dir, image)) # read current image as np array
+    img_boxes = df_labels[df_labels["file_name"] == image.split(".")[0]] # get all bounding boxes of the current image
         
         # randomly pick img_2 
-        img_2_name = random.choice(images)
-        img_2 = plt.imread(os.path.join(images_dir, img_2_name))
-        img_2_boxes = df_labels[df_labels["file_name"] == img_2_name.split(".")[0]]
+    img_2_name = random.choice(images)
+    img_2 = plt.imread(os.path.join(images_dir, img_2_name))
+    img_2_boxes = df_labels[df_labels["file_name"] == img_2_name.split(".")[0]]
 
+    if bernouli:
+        dice = [True, False]
+        img2_already_used = False
+
+           # apply cutmix?
+        boxes = img_boxes # in case no aug was applied
+        roll = random.choice(dice)
+        if roll:
+            img, boxes = cutmix(img, boxes, img_2, img_2_boxes)
+            img2_already_used = True
+
+           # apply cutout?
+        roll = random.choice(dice)
+        if roll:
+           img, boxes = cutout(img, img_boxes)
+
+           # apply mixup?
+        roll = random.choice(dice)
+        if roll:
+            if img2_already_used: # sample another image for mixup
+                img_2_name = random.choice(images)
+                img_2 = plt.imread(os.path.join(images_dir, img_2_name))
+                img_2_boxes = df_labels[df_labels["file_name"] == img_2_name.split(".")[0]]               
+            img, boxes = mixup(img, boxes, img_2, img_2_boxes)
+           
+        #    disp_bb(img, boxes)
+           # save 
+        plt.imsave(os.path.join(images_aug_dir, image), img)
+        boxes = boxes.drop(columns=["file_name"])
+        boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
+    else:  
         aug = random.choice(options)
         if aug == "cutmix":
-           img, boxes = cutmix(img, img_boxes, img_2, img_2_boxes)
-        #    disp_bb(img, boxes)
-           plt.imsave(os.path.join(images_aug_dir, image), img)
-            # Save bounding boxes to txt
-            # Drop the first column
-           boxes = boxes.drop(columns=["file_name"])
-           boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
-        #    break
+            img, boxes = cutmix(img, img_boxes, img_2, img_2_boxes)
+                #    disp_bb(img, boxes)
+            plt.imsave(os.path.join(images_aug_dir, image), img)
+                    # Save bounding boxes to txt
+                    # Drop the first column
+            boxes = boxes.drop(columns=["file_name"])
+            boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
+                #    break
         elif aug == "cutout":
-           img, boxes = cutout(img, img_boxes)
-        #    disp_bb(img, boxes)
-           plt.imsave(os.path.join(images_aug_dir, image), img)
-           boxes = boxes.drop(columns=["file_name"])
-           boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
-        #    break
+            img, boxes = cutout(img, img_boxes)
+                #    disp_bb(img, boxes)
+            plt.imsave(os.path.join(images_aug_dir, image), img)
+            boxes = boxes.drop(columns=["file_name"])
+            boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
+                #    break
         elif aug == "mixup":
-           img, boxes = mixup(img, img_boxes, img_2, img_2_boxes)
-        #    disp_bb(img, boxes)
-           plt.imsave(os.path.join(images_aug_dir, image), img)
-           boxes = boxes.drop(columns=["file_name"])
-           boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
-        #    break
+            img, boxes = mixup(img, img_boxes, img_2, img_2_boxes)
+                #    disp_bb(img, boxes)
+            plt.imsave(os.path.join(images_aug_dir, image), img)
+            boxes = boxes.drop(columns=["file_name"])
+            boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
+                #    break
         elif aug == "none":
-        #    disp_bb(img, img_boxes)
-           plt.imsave(os.path.join(images_aug_dir, image), img)
-           img_boxes = img_boxes.drop(columns=["file_name"])
-           img_boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
-        #    break
+                #    disp_bb(img, img_boxes)
+            plt.imsave(os.path.join(images_aug_dir, image), img)
+            img_boxes = img_boxes.drop(columns=["file_name"])
+            img_boxes.to_csv(os.path.join(AUG_DIR, split, "labels", image.split(".")[0] + ".txt"), header=False, index=False, sep=" ")
+                #    break
         else:
            raise ValueError("No valid augmentation chosen! make sure `options` has the right augmentation options!")
-
-    # Copy over warpd.yaml
-    shutil.copy(os.path.join(BASE_DIR, "warpd.yaml"), os.path.join(AUG_DIR, "warpd.yaml"))
-    # Copy over val and test directories
-    for folder in ["val", "test"]:
-        src_dir = os.path.join(BASE_DIR, folder)
-        dest_dir = os.path.join(AUG_DIR, folder)
-        if os.path.exists(dest_dir):
-            shutil.rmtree(dest_dir)
-        shutil.copytree(src_dir, dest_dir)
     print("Finished processing")
+       # Copy over warpd.yaml
+   shutil.copy(os.path.join(BASE_DIR, "warpd.yaml"), os.path.join(AUG_DIR, "warpd.yaml"))
+    # Copy over val and test directories
+   if split == "train":
+    for folder in ["val", "test"]:
+       src_dir = os.path.join(BASE_DIR, folder)
+       dest_dir = os.path.join(AUG_DIR, folder)
+       if os.path.exists(dest_dir):
+          shutil.rmtree(dest_dir)
+       shutil.copytree(src_dir, dest_dir)
 
+
+
+
+#generate random augmented test set
+generate_data_set(options = ["cutmix", "cutout", "mixup", "none"], AUG_DIR = "DATASETS_RANDOM_test", split="test")
+
+# generate bernouli dist augmentations
+# generate_data_set(AUG_DIR = "DATASETS_BERNOULLI", bernouli=True)
 
 # generates random augmentation dataset
-generate_data_set(AUG_DIR = "DATASETS_RANDOM_AUG")
+# generate_data_set(AUG_DIR = "DATASETS_RANDOM_AUG")
 
 # generates all mixup dataset
 # generate_data_set(options=["mixup"], AUG_DIR = "DATASETS_MIXUP")

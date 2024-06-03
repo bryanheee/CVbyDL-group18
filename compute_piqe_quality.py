@@ -6,7 +6,6 @@ import pickle
 # from pypiqe import piqe -> same output as as gh code, and it is validated against the matlab code
 
 
-
 def save_dict_to_file(dictionary, filename):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'wb') as file:

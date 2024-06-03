@@ -93,7 +93,6 @@ def mixup2images(file1, file2, alpha):
     fmt = ['%d'] + ['%.6f'] * (result.shape[1] - 1)
     np.savetxt(os.path.join(new_train_labels_path, label_file), result, delimiter=' ', fmt=fmt, newline='\n')
 
-
 if __name__ == "__main__":
     
     trainORval = 'train'
@@ -125,4 +124,3 @@ if __name__ == "__main__":
 
     for tuple in zipped_files:
         mixup2images(tuple[0], tuple[1], alpha)
-        break
