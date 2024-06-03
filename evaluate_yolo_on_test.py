@@ -1,29 +1,29 @@
+
+import argparse
+import os
 from ultralytics import YOLO
 from pathlib import Path
 
+def main():
+    parser = argparse.ArgumentParser(description="YOLO Model Validation Script")
+    parser.add_argument('--model_path', type=str, required=True, help="Path to the YOLO model (.pt file)")
+    parser.add_argument('--yaml_path', type=str, required=True, help="Path to the dataset configuration YAML file")
+    parser.add_argument('--save_results_path', type=str, required=True, help="Directory to save validation results")
+    parser.add_argument('--name', type=str, default='results', help="Name for the results")
+    
+    args = parser.parse_args()
 
-# MAKE SURE TO put the path to the last.py or best.pt
-path_to_mixup_yolo = 'runs-low-res-mixup/detect/train/weights/last.pt'
-path_to_yolo_no_augmentation = 'runs-low-res-no-augment/detect/train/weights/last.pt'
-model = YOLO(path_to_mixup_yolo)
+    results_folder_path = os.path.join(args.save_results_path, args.name)
+    os.makedirs(results_folder_path, exist_ok=True)
 
-# First swap the test an val path in wapd.yaml!!! or just replace
-rel_path_to_mixup_yaml = "low_res_datasets_mixup_lam05000386523859661/warpd.yaml"
-rel_path = "DATASETS_LOW_RES/warpd.yaml"
-full_path = Path(rel_path_to_mixup_yaml).resolve()
+    model = YOLO(args.model_path)
+    full_path = Path(args.yaml_path).resolve()
 
+    try:
+        val_results = model.val(data=str(full_path), plots=True, save_json=True, project=args.save_results_path, name=args.name)
+    except RuntimeError as e:
+        print(f"This shouldn't print {e}")
+        print(f"================== this is the full path {full_path} ==================")
 
-save_test_results_at = 'test/low_res/'
-save_test_results_at_mixup = 'test/mixup'
-name = 'results'
-try:
-    val_results = model.val(data=str(full_path), plots=True, save_json = True,  project=save_test_results_at_mixup, name=name)
-
-    print(val_results.box.map)  # map50-95
-    print(val_results.box.map50)  # map50
-    print(val_results.box.map75)  # map75
-    print(val_results.box.maps)  # a list contains map50-95 of each category
-
-except RuntimeError as e:
-    print(f"This shouldn't print {e}")
-    print(f"================== this is the full path {full_path} ==================")
+if __name__ == "__main__":
+    main()
