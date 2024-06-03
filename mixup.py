@@ -45,7 +45,6 @@ def visualize_image(image, labels=None, text=""):
     # Add text at the bottom
     if text:
         plt.text(0.5, -0.05, text, ha='center', va='top', transform=ax.transAxes, fontsize=12)
-
     plt.show()
 
 def mixup2images(file1, file2, alpha):
@@ -59,7 +58,7 @@ def mixup2images(file1, file2, alpha):
     # print(file)
     # print(type(arr1))
     # print(arr1)
-    # visualize_image(image, arr1 ,f"image1, shape = {image.shape}")
+    visualize_image(image, arr1 ,f"image1, shape = {image.shape}")
 
     image2 = cv2.imread(os.path.join(dataset_path, file2), cv2.IMREAD_COLOR)
     image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2RGB).astype(np.float32)
@@ -68,7 +67,7 @@ def mixup2images(file1, file2, alpha):
     file2 = os.path.join(labels_path, label_file2)
     arr2 = np.loadtxt(file2).reshape(-1, 5)
     # print(f"array 2 is \n {arr2}")
-    # visualize_image(image2, arr2, f"image2, shape = {image2.shape}")
+    visualize_image(image2, arr2, f"image2, shape = {image2.shape}")
 
 
     # print(f"shape of file 1 is = {image.shape}")
@@ -84,7 +83,7 @@ def mixup2images(file1, file2, alpha):
     result = np.concatenate((arr1, arr2), axis=0)
     # print(f"result is = \n {result}")
     mixedup_images = lam*image + (1 - lam)*image2
-    # visualize_image(mixedup_images, result, f"mixed-up image, shape = {mixedup_images.shape}")
+    visualize_image(mixedup_images, result, f"mixed-up image, shape = {mixedup_images.shape}")
 
     mixedup_images = (mixedup_images * 255.0).astype(np.uint8) #denormalize
     output_file_path = os.path.join(new_train_path, file1)
@@ -93,7 +92,6 @@ def mixup2images(file1, file2, alpha):
 
     fmt = ['%d'] + ['%.6f'] * (result.shape[1] - 1)
     np.savetxt(os.path.join(new_train_labels_path, label_file), result, delimiter=' ', fmt=fmt, newline='\n')
-
 
 if __name__ == "__main__":
     
@@ -114,14 +112,15 @@ if __name__ == "__main__":
     new_train_labels_path = 'low_res_datasets_mixup_lam'+ str(lam).replace('.', '') +'/' + trainORval + '/labels'
 
     # Create directories for new train and val sets
-    os.makedirs(new_train_path, exist_ok=True)
-    os.makedirs(new_train_labels_path, exist_ok=True)
+    # os.makedirs(new_train_path, exist_ok=True)
+    # os.makedirs(new_train_labels_path, exist_ok=True)
 
     # Get list of all image files in the folder
     image_files = [f for f in os.listdir(dataset_path) if os.path.isfile(os.path.join(dataset_path, f))]
     shuffled_image_files = image_files[:]
     random.shuffle(shuffled_image_files)
     zipped_files = list(zip(image_files, shuffled_image_files))
+    # mixup2images(tuple[0], tuple[1], alpha)
 
     for tuple in zipped_files:
         mixup2images(tuple[0], tuple[1], alpha)
