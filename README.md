@@ -3,14 +3,16 @@
 - Tested on: Python 3.9.6
 - It is recommended to create a virtual environment first before proceeding with the next step
 - There is a requirements.txt
+
 ```
  pip install -r requirements.txt
 ```
 
 ## Dividing original train set into train subset and val(idation) subset
-I splitted the Warp-D training set into a training subset and a subset for validation, by running `train_val_split.py`. 
 
-This is done so that YOLO does not use the test set as a validation set, otherwise it would overfit on the testset. 
+I splitted the Warp-D training set into a training subset and a subset for validation, by running `train_val_split.py`.
+
+This is done so that YOLO does not use the test set as a validation set, otherwise it would overfit on the testset.
 
 After unzipping the WARP dataset archive that you can download from kaggle in the root of your `pwd` (current working directory), you should be able to run `train_val_split.py`, in order to obtain the needed structure for the `datasets` directory, see below.
 
@@ -37,6 +39,7 @@ datasets/
 For mixup, run `mixup.py`.
 Note mixup is only applied to the train subset, not the val subset or test set
 To make yolo use the other dataset, as opposed to the non-augmented dataset, you can run `yolo setting` in your terminal and it should print the location of `settings.yaml` on your machine and the current values of the settings, e.g.:
+
 ```
 ...
 
@@ -66,3 +69,9 @@ If you want to now make YOLOv8 train on the augmented dataset instead of the ori
 Now having done the above, you must add `data.yaml` (just manually copy and paste) to the location specified in the previous section. Also do the same for the `val` and `test` directories (copy them into the newly created directory)
 
 Then to commence training, run `train.py` in your terminal.
+
+## Contributors
+
+- Irtaza Hashmi - TU Delft
+- Bryan He - TU Delft
+- Mike Wu - TU Delft
