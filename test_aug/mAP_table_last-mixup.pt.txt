@@ -1,4 +1,4 @@
-                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 33/33 [01:03<00:00,  1.93s/it]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 33/33 [01:02<00:00,  1.88s/it]
                    all        522       1851      0.423      0.226      0.231      0.148
            bottle-blue        522        125      0.402       0.16      0.169      0.116
           bottle-green        522         93       0.39      0.323      0.315      0.203
