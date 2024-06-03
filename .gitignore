@@ -7,6 +7,7 @@
 # Folders
 Warp_D/
 archive_split/
+archive/
 coco8/
 cvbydl/
 # datasets/
@@ -26,3 +27,6 @@ warpd/
 # Except this file itself and the .gitkeep files
 !datasets/**/.gitkeep
 !datasets/**/*.yaml
+
+# venvs
+cv_project_venv/
