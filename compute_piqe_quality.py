@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 from piqe import piqe
 import pickle
+# from pypiqe import piqe -> same output as as gh code, and it is validated against the matlab code
+
 
 def save_dict_to_file(dictionary, filename):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -25,6 +27,10 @@ def analyze_images(image_paths, target_resolution):
         image = cv2.imread(image_path)
         image_resized = cv2.resize(image, target_resolution)
         piqe_score = piqe(image_resized)[0]
+        score = piqe(image_resized)[0]   
+        print(f"the score computed by python module {score}")
+        # print(f"the score computed by github code {piqe_score}")
+        # break
         piqe_scores.append(piqe_score)
         print(f"now done with computing image number {i}, piqe score = {piqe_score}")
     avg_piqe = np.mean(piqe_scores) if piqe_scores else 0
