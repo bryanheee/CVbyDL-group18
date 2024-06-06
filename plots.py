@@ -26,7 +26,7 @@ def create_plot(metrics, title, filename):
             ax.plot(df['epoch'], df[metric], label=legend_labels[j], color=colors[j])
         ax.set_title(metric)
         ax.legend()
-    plt.suptitle(title)
+    # plt.suptitle(title)
     plt.tight_layout()
     plt.savefig(filename)
     plt.show()

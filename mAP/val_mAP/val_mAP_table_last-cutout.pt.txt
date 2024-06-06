@@ -1,0 +1,30 @@
+               Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 31/31 [01:02<00:00,  2.01s/it]
+                   all        491       1792      0.366      0.205      0.238      0.179
+           bottle-blue        491        127       0.37      0.213      0.236      0.175
+          bottle-green        491        110      0.633      0.318      0.486      0.367
+           bottle-dark        491        102      0.536       0.17      0.311      0.201
+           bottle-milk        491         77      0.134      0.013      0.112     0.0939
+         bottle-transp        491        292      0.519       0.11      0.175      0.136
+     bottle-multicolor        491         25          0          0     0.0134     0.0114
+         bottle-yogurt        491         63      0.425     0.0317     0.0786     0.0535
+            bottle-oil        491         55       0.16     0.0727     0.0503     0.0381
+                  cans        491        111      0.131      0.036     0.0325     0.0213
+       juice-cardboard        491         51          0          0     0.0105    0.00724
+        milk-cardboard        491         67      0.271     0.0299     0.0778     0.0571
+       detergent-color        491         58     0.0904     0.0172     0.0478     0.0314
+ detergent-transparent        491         63      0.381      0.111      0.105     0.0875
+         detergent-box        491         15          0          0      0.123     0.0961
+              canister        491         28      0.467      0.188      0.225       0.19
+      bottle-blue-full        491         53      0.512      0.633      0.518      0.382
+    bottle-transp-full        491        103      0.517      0.495      0.512      0.403
+      bottle-dark-full        491         44       0.64      0.636      0.639      0.501
+     bottle-green-full        491         46      0.541      0.674      0.632      0.497
+bottle-multicolor-full        491         29      0.471       0.31      0.323      0.264
+      bottle-milk-full        491         22      0.366      0.273      0.347      0.287
+       bottle-oil-full        491          7          1          0     0.0144     0.0086
+       detergent-white        491         57      0.241     0.0702     0.0987     0.0724
+         bottle-blue5l        491         86      0.372      0.116       0.14      0.109
+    bottle-blue5l-full        491         20      0.541        0.4      0.535      0.414
+          glass-transp        491         36      0.139     0.0556     0.0731     0.0422
+            glass-dark        491         20      0.353        0.4      0.341      0.224
+           glass-green        491         25      0.435       0.36      0.409      0.251
