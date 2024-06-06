@@ -1,0 +1,7 @@
+,train_mAP:mAP50-95,val_mAP:mAP50-95,test:mAP50-95,test_aug:mAP50-95
+original-low-res,0.686,0.336,0.35,0.163
+cutmix,0.456,0.12,0.12,0.116
+cutout,0.605,0.179,0.186,0.147
+mixup,0.196,0.237,0.247,0.148
+random-aug,0.504,0.296,0.293,0.212
+bernoulli,0.41,0.284,0.277,0.207
