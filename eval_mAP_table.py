@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # Define the paths to the directories containing the files
 base_dir = 'mAP'
-sub_dirs = ['test', 'test_aug', 'train_mAP', 'val_mAP']
+sub_dirs = ['test', 'test_aug']
 augmentation_strategies = ['original-low-res', 'cutmix', 'cutout', 'mixup', 'random-aug', 'bernoulli']
 
 # Dictionary to store the results
@@ -36,10 +36,10 @@ df_map50_95 = pd.DataFrame(results_map50_95).T
 
 # Reorder the columns
 column_order_map50 = [
-    'train_mAP:mAP50', 'val_mAP:mAP50', 'test:mAP50', 'test_aug:mAP50'
+    'test:mAP50', 'test_aug:mAP50'
 ]
 column_order_map50_95 = [
-    'train_mAP:mAP50-95', 'val_mAP:mAP50-95', 'test:mAP50-95', 'test_aug:mAP50-95'
+     'test:mAP50-95', 'test_aug:mAP50-95'
 ]
 
 df_map50 = df_map50[column_order_map50]
